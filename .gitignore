@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# VS Code
+.vscode/
+
+# Power BI
+*.pbix.autorecovery
+
+# Logs
+*.log
+
+# CSV Generated Files
+data/processed/
+
+# OS Files
+.DS_Store
+Thumbs.db
