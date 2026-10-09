@@ -5,6 +5,10 @@ import json
 import os
 from typing import Any
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 from .analytics import run_tool
 
 SYSTEM_RULES = """You are an analytics assistant for a fictional mutual-fund distributor.
