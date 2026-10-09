@@ -6,6 +6,21 @@ __pycache__/
 venv/
 env/
 
+# Local secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+service-account*.json
+
+# Local database / generated data
+data/*.db
+data/*.sqlite
+data/*.sqlite3
+data/raw/
+data/processed/
+
 # Jupyter
 .ipynb_checkpoints/
 
@@ -17,9 +32,6 @@ env/
 
 # Logs
 *.log
-
-# CSV Generated Files
-data/processed/
 
 # OS Files
 .DS_Store
