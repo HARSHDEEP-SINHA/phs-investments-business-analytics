@@ -28,6 +28,7 @@ try:
     cities = get_json("/api/cities")["cities"]
     schemes = get_json("/api/schemes")["schemes"]
     sips = get_json("/api/sips")
+    failures = get_json("/api/failures")
 except requests.RequestException:
     st.error("Cannot reach the API. Start FastAPI first: uvicorn backend.main:app --reload")
     st.stop()
@@ -77,6 +78,30 @@ with right:
 st.subheader("SIP status")
 sip_df = pd.DataFrame(sips["statuses"])
 st.dataframe(sip_df, use_container_width=True, hide_index=True)
+
+st.subheader("Transaction quality")
+failure_types = pd.DataFrame(failures.get("by_type", []))
+monthly_failures = pd.DataFrame(failures.get("monthly", []))
+if not failure_types.empty:
+    failure_types = failure_types.sort_values("failure_rate_pct", ascending=False)
+    st.plotly_chart(
+        px.bar(failure_types, x="transaction_type", y="failure_rate_pct",
+               title="Failure rate by transaction type",
+               labels={"transaction_type": "Transaction type", "failure_rate_pct": "Failure rate (%)"}),
+        use_container_width=True,
+    )
+if not monthly_failures.empty:
+    st.plotly_chart(
+        px.line(monthly_failures, x="month", y="failure_rate_pct", markers=True,
+                title="Monthly transaction failure rate",
+                labels={"month": "Month", "failure_rate_pct": "Failure rate (%)"}),
+        use_container_width=True,
+    )
+st.caption(
+    f"Overall synthetic failure rate: {failures.get('failure_rate_pct', 0):.2f}% "
+    f"({failures.get('failed_transactions', 0):,} failed of "
+    f"{failures.get('total_transactions', 0):,} transactions). Rates describe the data; they do not identify root causes."
+)
 
 st.divider()
 st.header("Ask the Analytics Agent")
