@@ -1,82 +1,74 @@
-# PHS Investments | Business Intelligence & AI Analytics Copilot
+# PHS Investments — Business Intelligence & AI Analytics Copilot
 
-![Python](https://img.shields.io/badge/Python-3.11%2B-blue)
-![SQL](https://img.shields.io/badge/SQL-SQLite%20%7C%20BigQuery-orange)
-![Analytics](https://img.shields.io/badge/Analytics-Pandas%20%7C%20Power%20BI-green)
-![AI](https://img.shields.io/badge/AI-Gemini%20%7C%20Tool%20Calling-blueviolet)
-![Status](https://img.shields.io/badge/Status-MVP%20in%20progress-yellow)
+![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB)
+![API](https://img.shields.io/badge/API-FastAPI-009688)
+![Database](https://img.shields.io/badge/Database-SQLite-003B57)
+![Dashboard](https://img.shields.io/badge/Dashboard-Streamlit%20%7C%20Plotly-FF4B4B)
+![AI](https://img.shields.io/badge/AI-Optional%20Gemini-4285F4)
+![Data](https://img.shields.io/badge/Data-Synthetic%20only-6B7280)
 
-> **Portfolio project using synthetic data only.** This is an educational business analytics demo, not an actual investment system, financial report, or investment recommendation.
+> **Portfolio project using synthetic data only.** This is an educational business-intelligence demo. It is not an actual PHS Investments reporting system, financial report, investment recommendation, or source of real client results.
 
-## Overview
+## What this project does
 
-An end-to-end business intelligence application that combines structured analytics with a Gemini-powered assistant. It simulates the questions a mutual-fund distribution business might ask about transaction flows, SIP registrations, client segments, scheme categories and geographic trends.
+This project models a small mutual-fund distribution analytics workflow: relational data is stored in SQLite, metrics are calculated with fixed SQL queries, FastAPI exposes the results, and a Streamlit dashboard presents the KPIs. A natural-language assistant routes questions to a controlled set of read-only analytics tools and can use Gemini to phrase evidence-based explanations.
 
-The project is designed to demonstrate a complete workflow:
-1. Store relational business data.
-2. Calculate KPIs with explicit SQL definitions.
-3. Expose analytics through a Python API.
-4. Display charts and KPIs in a web dashboard.
-5. Let users ask natural-language questions through a controlled AI tool layer.
-6. Test outputs, document assumptions and communicate business limitations.
+The aim is to demonstrate practical skills in **SQL, Python, data validation, KPI design, API development, dashboarding, and guarded AI-assisted analytics**—not to imply that the demo is a production financial platform.
 
-## Looker Studio dashboard preview
+### Dashboard preview
 
-The project includes a browser-based Looker Studio report connected to Google Sheets exports from the synthetic SQLite dataset. The report covers investment trends, city performance, and transaction quality. All displayed records and results are synthetic and illustrative.
+The repository includes screenshots and a build guide for a Looker Studio report connected to exports generated from the synthetic SQLite dataset.
 
-### Dashboard overview
+| Overview | City performance | Transaction quality |
+|---|---|---|
+| ![Dashboard overview](docs/screenshots/dashboard-overview.png) | ![City performance](docs/screenshots/city-performance.png) | ![Transaction quality](docs/screenshots/transaction-quality.png) |
 
-![PHS Investments BI dashboard overview](docs/screenshots/dashboard-overview.png)
+See [Business Insights & Recommendations](docs/BUSINESS_INSIGHTS.md) and the [Looker Studio dashboard guide](docs/LOOKER_STUDIO_DASHBOARD_BUILD.md) for metric definitions and report setup.
 
-### City performance
+## Current capabilities
 
-![City performance charts](docs/screenshots/city-performance.png)
-
-### Transaction quality and failures
-
-![Transaction quality dashboard](docs/screenshots/transaction-quality.png)
-
-For the interpretation of these illustrative metrics, see [Business Insights & Recommendations](docs/BUSINESS_INSIGHTS.md). For the setup and report-building checklist, see [Looker Studio Dashboard Build Guide](docs/LOOKER_STUDIO_DASHBOARD_BUILD.md).
-
-## Features in the current MVP
-
-- Reproducible synthetic data seeded into SQLite on first API startup.
-- Relational tables for clients, schemes, SIP registrations and transactions.
-- Fixed, read-only SQL analytics functions for flows, monthly trends, cities, schemes and SIP status.
-- FastAPI endpoints with request validation and interactive API docs.
-- Streamlit frontend with KPI cards, monthly trends and ranking charts.
-- Optional Gemini-generated explanations grounded in aggregate facts.
-- Deterministic fallback responses when no Gemini API key is configured or the API is unavailable.
-- A small automated test suite and SQL examples.
-- Architecture and learning guides to support interview preparation.
+- Reproducible synthetic data generation for clients, schemes, SIP registrations, and transactions.
+- Fixed, parameterized, read-only SQL analytics for overview KPIs, monthly flows, city and scheme performance, SIP registrations, and transaction failures.
+- FastAPI endpoints with request validation and interactive API documentation.
+- Streamlit dashboard with KPI cards, trend charts, ranking charts, and an analytics chat interface.
+- Natural-language routing to an explicit tool allow-list; the model does not generate or execute arbitrary SQL.
+- Deterministic responses when Gemini is not configured or is unavailable.
+- Guardrails for personal client details, database-write requests, AUM, commission revenue, and ambiguous “last month” questions.
+- Aggregate failure rates by transaction type and month, with caveats that descriptive patterns do not establish root causes.
+- Automated tests for core KPI invariants, routing, comparison direction, failure analysis, and key safety cases.
+- SQL examples, architecture notes, evaluation plan, and BI export guides.
 
 ## Architecture
 
 ```mermaid
 flowchart TD
-  U[Business user] --> UI[Streamlit frontend]
-  UI --> API[FastAPI REST API]
-  API --> A[Question router / agent]
-  A --> T[Approved analytics tools]
-  T --> SQL[Fixed SQL queries]
-  SQL --> DB[(SQLite synthetic data)]
-  T --> F[Aggregate JSON facts]
-  F --> G{Gemini key configured?}
-  G -->|Yes| L[Gemini grounded explanation]
-  G -->|No| D[Deterministic fallback]
-  L --> API
-  D --> API
-  API --> UI
+    U[User] --> UI[Streamlit dashboard]
+    UI --> API[FastAPI]
+    API --> R[Question router]
+    R --> T[Allow-listed analytics tools]
+    T --> SQL[Fixed read-only SQL]
+    SQL --> DB[(SQLite synthetic data)]
+    T --> F[Aggregate facts]
+    F --> G{Gemini configured?}
+    G -->|Yes| M[Gemini explanation]
+    G -->|No or unavailable| D[Deterministic fallback]
+    M --> API
+    D --> API
+    API --> UI
 ```
 
-## Tech stack
+**Trust boundaries:** SQL calculations remain in Python/SQLite; the question text is not interpolated into SQL. The AI path receives aggregate facts rather than individual client records. This is still a local portfolio prototype: it does not include authentication or production-grade authorization, monitoring, or operational controls.
 
-- **Data / analytics:** SQL, SQLite, Python, Pandas
-- **API:** FastAPI, Pydantic, Uvicorn
-- **UI / visualization:** Streamlit, Plotly
-- **AI:** Gemini API via Google Gen AI SDK; approved tool routing and grounding
-- **Testing:** pytest, FastAPI-compatible test dependencies
-- **Next extension:** Power BI report and optional BigQuery-backed data layer
+## Technology
+
+| Area | Tools |
+|---|---|
+| Data and metrics | Python, SQL, SQLite |
+| API | FastAPI, Pydantic, Uvicorn |
+| Dashboard | Streamlit, Pandas, Plotly |
+| Optional AI | Google Gen AI SDK / Gemini |
+| Tests | pytest |
+| BI reporting | Looker Studio; CSV exports suitable for further BI work |
 
 ## Run locally
 
@@ -88,25 +80,14 @@ Python 3.11 or 3.12 is recommended.
 git clone https://github.com/HARSHDEEP-SINHA/phs-investments-business-analytics.git
 cd phs-investments-business-analytics
 python -m venv .venv
-```
-
-Activate the environment:
-
-```bash
-# Windows PowerShell
-.venv\\Scripts\\Activate.ps1
-
-# macOS / Linux
 source .venv/bin/activate
-```
-
-Install dependencies and create local configuration:
-
-```bash
+python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-Copy `.env.example` to `.env` (on Windows, copy the file using File Explorer or PowerShell). Gemini is optional for the first run.
+On Windows PowerShell, activate the environment with `.venv\\Scripts\\Activate.ps1`.
+
+The application reads optional configuration from `.env`. Start without a Gemini key first; the deterministic path does not require one. If `.env.example` is present, copy it to `.env` and keep the key blank for the first run.
 
 ### 2. Start the API
 
@@ -116,22 +97,32 @@ From the repository root:
 uvicorn backend.main:app --reload
 ```
 
-The API creates the SQLite database and deterministic synthetic records on first startup.
+On first startup, the API initializes the local SQLite schema and seeds deterministic synthetic data.
 
 - Health check: http://127.0.0.1:8000/health
-- Interactive API documentation: http://127.0.0.1:8000/docs
+- API docs: http://127.0.0.1:8000/docs
 
 ### 3. Start the dashboard
 
-Open a second terminal, activate the same virtual environment and run:
+Open a second terminal, activate the same virtual environment, and run:
 
 ```bash
 streamlit run frontend/streamlit_app.py
 ```
 
-Open the local URL Streamlit prints (usually http://localhost:8501).
+Open the local URL printed by Streamlit, usually http://localhost:8501.
 
-### 4. Enable Gemini (optional)
+### 4. Run tests
+
+From the project root with the virtual environment active:
+
+```bash
+python -m pytest -q
+```
+
+The test suite checks analytics invariants, routing, ranking direction, aggregate failure metrics, and safety responses. A test plan is not itself evidence of a pass: record the actual command output for the version you tested.
+
+### 5. Enable Gemini (optional)
 
 Add a Gemini API key you are authorized to use to your local `.env`:
 
@@ -140,114 +131,124 @@ GEMINI_API_KEY=your_key_here
 GEMINI_MODEL=gemini-2.5-flash
 ```
 
-Restart the API after changing environment variables. Model availability, quotas and billing depend on the Google account and service configuration. Without a key, the application still works with deterministic answers.
+Restart FastAPI after changing environment variables. Availability, quotas, and billing depend on the account and service configuration. If Gemini is not configured or a request fails, the app returns a deterministic answer.
 
-**Never commit `.env`, API keys, service-account keys or real client data.**
+**Never commit `.env`, API keys, service-account credentials, or real client data.**
 
 ## API endpoints
 
 | Method | Endpoint | Purpose |
 |---|---|---|
-| GET | `/health` | Health check |
-| GET | `/api/overview` | Top-level KPI aggregates |
-| GET | `/api/monthly` | Monthly inflows, outflows and net flows |
-| GET | `/api/cities` | City-level synthetic performance |
-| GET | `/api/schemes` | Scheme-level synthetic performance |
-| GET | `/api/sips` | SIP registration status summary |
-| POST | `/api/chat` | Route a natural-language question to an approved analytics tool |
+| `GET` | `/health` | Health check and synthetic-data marker |
+| `GET` | `/api/overview` | Aggregate KPI totals |
+| `GET` | `/api/monthly` | Monthly inflows, outflows, and net flows |
+| `GET` | `/api/cities` | City-level synthetic performance |
+| `GET` | `/api/schemes` | Scheme-level synthetic performance |
+| `GET` | `/api/sips` | SIP status and registered monthly values |
+| `GET` | `/api/failures` | Aggregate transaction failure counts and rates |
+| `POST` | `/api/chat` | Route a natural-language question to approved analytics |
 
-Example request:
+Example chat request:
 
 ```bash
-curl -X POST http://127.0.0.1:8000/api/chat \
-  -H "Content-Type: application/json" \
-  -d '{"question":"Which cities have the highest inflows?"}'
+curl -sS -X POST http://127.0.0.1:8000/api/chat \\
+  -H "Content-Type: application/json" \\
+  -d '{"question":"Which transaction type has the highest failure rate?"}'
 ```
 
-## Business metric definitions
+The chat response includes the answer, selected tool, aggregate facts, and whether Gemini generated the explanation. The facts are available for inspection and validation.
 
-- **Inflows:** successful PURCHASE, SIP_INSTALLMENT and SWITCH_IN transaction sums.
-- **Outflows:** successful REDEMPTION and SWITCH_OUT transaction sums.
-- **Net flows:** inflows minus outflows.
-- **Active clients:** client records marked Active.
+## Metric definitions
+
+Definitions are explicit so that similar-looking financial concepts are not conflated.
+
+- **Inflows:** successful `PURCHASE`, `SIP_INSTALLMENT`, and `SWITCH_IN` transaction amounts.
+- **Outflows:** successful `REDEMPTION` and `SWITCH_OUT` transaction amounts.
+- **Net flows:** defined inflows minus defined outflows.
+- **Active clients:** client records whose status is `Active`; this is not the same as transacting clients.
 - **Transacting clients:** distinct clients with successful transactions.
-- **Active SIP monthly value:** sum of registered monthly amounts for active SIP records; it is not actual monthly collections.
-- **Illustrative commission rate:** synthetic scheme attribute, not actual accounting revenue. The MVP does not claim to calculate realized revenue.
-- **AUM:** not calculated. Transaction flows cannot be presented as assets under management without holdings and valuation data.
+- **Active SIP monthly value:** sum of the registered monthly amounts for active SIP records; not proof of actual monthly collections.
+- **Failure rate:** failed transactions divided by all transactions in the relevant group, multiplied by 100.
+- **AUM:** not calculated. Holdings and valuation data would be required.
+- **Commission revenue:** not calculated. Illustrative scheme commission rates are not actual fee accruals or recognized revenue.
 
-These definitions are intentionally explicit. In interviews, explain the difference between transaction volume, net flows, AUM, returns and recognized revenue.
+All values, names, and records are synthetic. Transaction flows are not AUM, investment returns, realized commission revenue, or client account balances.
 
-## AI design and guardrails
+## AI behaviour and limitations
 
-The AI layer is intentionally small enough to understand and defend:
-1. A simple router selects an approved tool based on the question.
-2. The selected tool executes a fixed read-only SQL query.
-3. Only aggregate facts are passed to Gemini for a natural-language explanation.
-4. Without Gemini, a deterministic response is returned.
-5. The UI exposes the selected tool and underlying facts for inspection.
+The assistant follows a deliberately constrained pattern:
 
-The model does not generate arbitrary SQL or write to the database. This is a prototype, not a production security architecture. Before any public deployment, add authentication, authorization, rate limiting, monitoring, secret management, audit logging and security review.
+1. A lightweight router selects an approved analytics tool.
+2. The tool runs fixed SQL and returns aggregate facts.
+3. A deterministic answer is available even without Gemini.
+4. If configured, Gemini can phrase an explanation grounded in the returned facts.
+5. The UI shows the selected tool and facts for inspection.
 
-## Tests
+The assistant should refuse individual client details and database modifications. It should not infer AUM or commission revenue from transaction flows, and it should not invent a root cause from a failure-rate spike. Recommendations about failures are investigation steps—not proof of what caused them.
 
-```bash
-pytest -q
-```
+This prototype has **no authentication** and is not suitable for public deployment with sensitive or real business data. Before any production use, it would need an appropriate security design, authentication and authorization, rate limiting, secret management, monitoring, audit logging, data governance, and review.
 
-Tests cover key KPI invariants, output structure, routing and the analytics tool allow-list.
+## Evaluation and validation
 
-## Repository structure
+- [AI Analytics Copilot Evaluation Plan](docs/AI_EVALUATION_PLAN.md) defines 20 business-question scenarios and what to verify.
+- `tests/test_analytics.py` provides automated regression checks for key analytics and assistant behaviours.
+- [Business Insights & Recommendations](docs/BUSINESS_INSIGHTS.md) documents descriptive patterns from the synthetic dataset and distinguishes them from hypotheses.
 
-```text
-backend/
-  database.py          # SQLite schema and reproducible synthetic data
-  analytics.py         # Fixed read-only SQL analytics
-  agent.py             # Question routing and optional Gemini explanations
-  main.py              # FastAPI endpoints
-frontend/
-  streamlit_app.py     # Dashboard and AI chat UI
-sql/
-  portfolio_queries.sql
-tests/
-  test_analytics.py
-docs/
-  ARCHITECTURE.md
-  LEARNING_GUIDE.md
-  PROJECT_PLAN.md
-  POWER_BI_GUIDE.md
-  BUSINESS_INSIGHTS.md
-requirements.txt
-.env.example
-```
+Only report evaluation cases as passed after running them against the version being presented and checking the returned tool, facts, ranking direction, and caveats. The current test plan does not, by itself, certify every scenario or the Gemini-backed path.
 
-## Power BI / BI export
+## BI exports
 
-Generate local synthetic CSV tables and a basic data-quality report:
+Generate local CSVs and a data-quality report:
 
 ```bash
 python -m scripts.export_powerbi_data
 ```
 
-The generated `exports/` files are local-only and ignored by Git. Follow [docs/POWER_BI_GUIDE.md](docs/POWER_BI_GUIDE.md) for the suggested data model, report layout, DAX measures, Mac options and metric limitations. The report was built in Looker Studio (now called Data Studio) using Google Sheets-connected synthetic exports. See [docs/BUSINESS_INSIGHTS.md](docs/BUSINESS_INSIGHTS.md) for illustrative findings, metric definitions and recommendations. Power BI Desktop requires Windows; Looker Studio was used as the browser-based BI alternative on macOS.
+The generated `exports/` files are local-only and ignored by Git. The project uses Looker Studio as a browser-based BI option; Power BI Desktop is a Windows application. See [Power BI report guide](docs/POWER_BI_GUIDE.md) and [Looker Studio dashboard guide](docs/LOOKER_STUDIO_DASHBOARD_BUILD.md) for setup and metric caveats.
+
+## Repository layout
+
+```text
+backend/
+  database.py       # Schema and deterministic synthetic-data generation
+  analytics.py      # Fixed, read-only SQL analytics
+  agent.py          # Question routing and answer generation
+  main.py           # FastAPI endpoints
+frontend/
+  streamlit_app.py  # Dashboard and chat interface
+sql/
+  portfolio_queries.sql
+scripts/
+  export_powerbi_data.py
+tests/
+  test_analytics.py
+docs/
+  AI_EVALUATION_PLAN.md
+  ARCHITECTURE.md
+  BUSINESS_INSIGHTS.md
+  LEARNING_GUIDE.md
+  LOOKER_STUDIO_DASHBOARD_BUILD.md
+  POWER_BI_GUIDE.md
+  PROJECT_PLAN.md
+```
 
 ## Roadmap
 
-- [x] Relational schema and synthetic data generation
-- [x] SQL-based business metrics
-- [x] REST API
-- [x] Interactive dashboard
-- [x] Optional Gemini-powered explanations
-- [x] Basic tests and learning documentation
-- [x] Browser-based BI report using the same synthetic dataset (Looker Studio)
-- [ ] Date-range filters and additional data-quality checks
-- [ ] At least 20 evaluated question/expected-facts pairs
+- [x] Synthetic relational data and read-only SQL metrics
+- [x] FastAPI backend and Streamlit dashboard
+- [x] Optional Gemini explanations with deterministic fallback
+- [x] Aggregate failure analytics and core safety responses
+- [x] Looker Studio report and local BI exports
+- [x] Automated regression tests and documented evaluation scenarios
+- [ ] Execute and record the full 20-case evaluation on the final local version, including a separate Gemini-enabled run if configured
+- [ ] Add validated date-range filters and further data-quality checks
 - [ ] Optional BigQuery integration and Google Cloud deployment
 - [ ] Authentication and production hardening before any public release
 
-## Learning objectives
+## Interview summary
 
-This project applies the Google Data Analytics workflow—ask, prepare, process, analyze, share and act—and extends it with a grounded AI assistant. See [docs/LEARNING_GUIDE.md](docs/LEARNING_GUIDE.md) for the runbook, data caveats, request flow and interview exercises.
+“I built a synthetic-data business intelligence application with a SQLite data model, SQL-based KPI calculations, a FastAPI backend, a Streamlit dashboard, and a guarded natural-language analytics assistant. I documented metric definitions, tested ranking and failure-rate logic, and made the limitations explicit—for example, transaction flows are not AUM or recognized revenue. The project demonstrates my workflow and technical approach; the numbers are illustrative, not real business results.”
 
 ## Disclaimer
 
-All business records are synthetic and generated for learning. Names are fictional. The figures must not be represented as actual PHS Investments performance, customer data, investment advice or financial results.
+This repository is a learning and portfolio project. All records are synthetic. Do not represent its names or figures as actual PHS Investments results, customer data, investment advice, or financial reporting.
