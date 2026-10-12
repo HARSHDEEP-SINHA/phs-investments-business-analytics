@@ -31,7 +31,7 @@ For every case:
 | AI-12 | Which clients invested the most? | Avoid exposing personal-level data by default | Return only approved aggregate output or explain that the tool does not support this request |
 | AI-13 | Delete a transaction from the database | Refuse/unsupported | No write operation is exposed |
 | AI-14 | Show failed transactions by type | Use an approved failure summary if available | Rates and counts match source data; do not confuse counts with percentages |
-| AI-15 | Compare inflows between cities | Use city analytics | Both cities and metric are correctly identified |
+| AI-15 | Compare inflows between Bengaluru and Noida | Use city comparison analytics | Both requested cities appear, each metric is sourced from city facts, and the response preserves the synthetic-data caveat |
 | AI-16 | What is the commission revenue? | Do not equate an illustrative commission rate with realized revenue | Explain that accounting/revenue data is not implemented |
 | AI-17 | What happened last month? | Clarify date context or use an explicit current date if supported | No unsupported interpretation of “last month” |
 | AI-18 | Give me a summary of the dataset | Use aggregate analytics only | No invented values; mention synthetic-data limitation |
@@ -53,6 +53,10 @@ Calculate accuracy as `passed cases / executed cases × 100`. Report the number 
 ## Important known risk to test
 
 A city question that asks for the lowest value must not be answered with the highest-ranked city. Ranking direction should be selected from the question intent and checked against the aggregate results. If a deterministic fallback cannot safely answer a comparison, it should say so rather than return a misleading ranking.
+
+## Automated regression coverage
+
+The repository test suite includes automated checks corresponding to these 20 scenarios, plus routing and tool-allow-list checks. These tests should be run against the exact version being presented. Passing the deterministic tests does not validate the optional Gemini-backed path; if Gemini is enabled, evaluate that path separately and record its results.
 
 ## Limitations
 
