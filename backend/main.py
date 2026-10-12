@@ -5,7 +5,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
-from .analytics import city_performance, monthly_trend, overview, scheme_performance, sip_summary
+from .analytics import city_performance, monthly_trend, overview, scheme_performance, sip_summary, transaction_failures
 from .agent import answer_question
 from .database import initialize_database
 
@@ -54,6 +54,12 @@ def get_schemes(limit: int = 10):
 @app.get("/api/sips")
 def get_sips():
     return sip_summary()
+
+
+@app.get("/api/failures")
+def get_failures():
+    """Aggregate transaction-quality metrics; no transaction-level records are returned."""
+    return transaction_failures()
 
 
 @app.post("/api/chat")
