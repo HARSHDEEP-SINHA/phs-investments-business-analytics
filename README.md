@@ -196,6 +196,8 @@ docs/
   ARCHITECTURE.md
   LEARNING_GUIDE.md
   PROJECT_PLAN.md
+  POWER_BI_GUIDE.md
+  BUSINESS_INSIGHTS.md
 requirements.txt
 .env.example
 ```
@@ -208,7 +210,7 @@ Generate local synthetic CSV tables and a basic data-quality report:
 python -m scripts.export_powerbi_data
 ```
 
-The generated `exports/` files are local-only and ignored by Git. Follow [docs/POWER_BI_GUIDE.md](docs/POWER_BI_GUIDE.md) for the suggested data model, report layout, DAX measures, Mac options and metric limitations. Power BI Desktop requires Windows; on macOS, use a Windows machine/VM or a browser-based BI alternative if Power BI Service authoring is unavailable.
+The generated `exports/` files are local-only and ignored by Git. Follow [docs/POWER_BI_GUIDE.md](docs/POWER_BI_GUIDE.md) for the suggested data model, report layout, DAX measures, Mac options and metric limitations. The report was built in Looker Studio (now called Data Studio) using Google Sheets-connected synthetic exports. See [docs/BUSINESS_INSIGHTS.md](docs/BUSINESS_INSIGHTS.md) for illustrative findings, metric definitions and recommendations. Power BI Desktop requires Windows; Looker Studio was used as the browser-based BI alternative on macOS.
 
 ## Roadmap
 
@@ -218,7 +220,7 @@ The generated `exports/` files are local-only and ignored by Git. Follow [docs/P
 - [x] Interactive dashboard
 - [x] Optional Gemini-powered explanations
 - [x] Basic tests and learning documentation
-- [ ] Power BI dashboard using the same dataset
+- [x] Browser-based BI report using the same synthetic dataset (Looker Studio)
 - [ ] Date-range filters and additional data-quality checks
 - [ ] At least 20 evaluated question/expected-facts pairs
 - [ ] Optional BigQuery integration and Google Cloud deployment
