@@ -26,7 +26,7 @@ def choose_tool(question: str) -> str:
         return "aum_guard"
     if any(k in q for k in ["commission revenue", "actual revenue", "recognized revenue", "accounting revenue"]):
         return "revenue_guard"
-    if any(k in q for k in ["delete ", "remove ", "update the database", "modify database", "change a transaction", "write to database"]):
+    if any(k in q for k in ["delete ", "remove ", "insert ", "update ", "modify ", "edit ", "drop table", "truncate table", "write to database", "update the database", "modify database", "change a transaction"]):
         return "read_only_guard"
     if any(k in q for k in ["which clients", "client names", "individual client", "personal client", "who invested", "client details"]):
         return "privacy_guard"
