@@ -67,7 +67,7 @@ def city_performance(limit: int = 10) -> list[dict]:
 
 
 def scheme_performance(limit: int = 10) -> list[dict]:
-    limit = max(1, min(int(limit), 20))
+    limit = max(1, min(int(limit), 100))
     with connect() as conn:
         rows = conn.execute("""
           SELECT s.scheme_name, s.category,
@@ -146,7 +146,7 @@ def run_tool(tool_name: str) -> dict:
       "city_performance": lambda: {"cities": city_performance(limit=20)},
       "city_comparison": lambda: {"cities": city_performance(limit=20)},
       "transaction_failures": transaction_failures,
-      "scheme_performance": lambda: {"schemes": scheme_performance()},
+      "scheme_performance": lambda: {"schemes": scheme_performance(limit=100)},
       "sip_summary": sip_summary,
     }
     if tool_name not in tools:
