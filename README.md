@@ -200,6 +200,16 @@ requirements.txt
 .env.example
 ```
 
+## Power BI / BI export
+
+Generate local synthetic CSV tables and a basic data-quality report:
+
+```bash
+python -m scripts.export_powerbi_data
+```
+
+The generated `exports/` files are local-only and ignored by Git. Follow [docs/POWER_BI_GUIDE.md](docs/POWER_BI_GUIDE.md) for the suggested data model, report layout, DAX measures, Mac options and metric limitations. Power BI Desktop requires Windows; on macOS, use a Windows machine/VM or a browser-based BI alternative if Power BI Service authoring is unavailable.
+
 ## Roadmap
 
 - [x] Relational schema and synthetic data generation
