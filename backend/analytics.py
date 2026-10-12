@@ -95,12 +95,57 @@ def sip_summary() -> dict:
                           "monthly_value_inr": round(r["monthly_value"] or 0, 2)} for r in rows]}
 
 
+
+def transaction_failures() -> dict:
+    """Return aggregate failure counts and rates; never expose transaction-level records."""
+    with connect() as conn:
+        total = conn.execute("""
+          SELECT COUNT(*) AS total,
+            SUM(CASE WHEN transaction_status='Failed' THEN 1 ELSE 0 END) AS failed
+          FROM transactions
+        """).fetchone()
+        by_type = conn.execute("""
+          SELECT transaction_type, COUNT(*) AS total,
+            SUM(CASE WHEN transaction_status='Failed' THEN 1 ELSE 0 END) AS failed
+          FROM transactions GROUP BY transaction_type ORDER BY transaction_type
+        """).fetchall()
+        monthly = conn.execute("""
+          SELECT substr(transaction_date,1,7) AS month, COUNT(*) AS total,
+            SUM(CASE WHEN transaction_status='Failed' THEN 1 ELSE 0 END) AS failed
+          FROM transactions GROUP BY substr(transaction_date,1,7) ORDER BY month
+        """).fetchall()
+
+    def row_summary(row, name_key=None):
+        total_count = int(row["total"] or 0)
+        failed_count = int(row["failed"] or 0)
+        result = {"total_transactions": total_count, "failed_transactions": failed_count,
+                  "failure_rate_pct": round(failed_count / total_count * 100, 2) if total_count else 0.0}
+        if name_key:
+            result[name_key] = row[name_key]
+        return result
+
+    return {
+        **row_summary(total),
+        "by_type": [
+            {"transaction_type": row["transaction_type"], **row_summary(row)}
+            for row in by_type
+        ],
+        "monthly": [
+            {"month": row["month"], **row_summary(row)}
+            for row in monthly
+        ],
+        "synthetic_data": True,
+    }
+
+
 def run_tool(tool_name: str) -> dict:
     """Allow-list for the AI layer: no arbitrary SQL and no writes."""
     tools = {
       "overview": overview,
       "monthly_trend": lambda: {"months": monthly_trend()},
-      "city_performance": lambda: {"cities": city_performance()},
+      "city_performance": lambda: {"cities": city_performance(limit=20)},
+      "city_comparison": lambda: {"cities": city_performance(limit=20)},
+      "transaction_failures": transaction_failures,
       "scheme_performance": lambda: {"schemes": scheme_performance()},
       "sip_summary": sip_summary,
     }
