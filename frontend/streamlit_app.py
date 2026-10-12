@@ -80,13 +80,16 @@ st.dataframe(sip_df, use_container_width=True, hide_index=True)
 
 st.divider()
 st.header("Ask the Analytics Agent")
-st.write("Ask about the overview, monthly trends, cities, schemes or SIP registrations. The agent uses approved read-only analytical tools.")
+st.write("Ask about overview KPIs, monthly trends, city or scheme rankings, SIP registrations, transaction failures, or a comparison between two cities. The assistant uses approved read-only analytics tools.")
 examples = [
     "Give me an overview of business performance",
     "Compare the monthly trends",
     "Which cities have the highest inflows?",
     "Summarize SIP registrations",
     "Which schemes have the highest inflows?",
+    "Compare inflows between Bengaluru and Noida",
+    "Show failed transactions by type",
+    "Which transaction type has the highest failure rate?",
 ]
 selected = st.selectbox("Example question", ["Choose a question..."] + examples)
 question = st.text_input("Your question", value="" if selected == "Choose a question..." else selected,
