@@ -107,10 +107,11 @@ def test_12_personal_client_question_is_refused():
     assert "can't disclose personal" in result["answer"]
 
 
-def test_13_database_write_request_is_refused():
-    result = answer_question("Delete a transaction from the database")
-    assert result["tool"] == "read_only_guard"
-    assert "no records were changed" in result["answer"]
+def test_13_database_write_requests_are_refused():
+    for question in ("Delete a transaction from the database", "Update a transaction in the database"):
+        result = answer_question(question)
+        assert result["tool"] == "read_only_guard"
+        assert "no records were changed" in result["answer"]
 
 
 def test_14_failure_by_type_includes_counts_and_percentages():
