@@ -34,6 +34,14 @@ def test_03_city_limit_is_bounded():
     assert len(city_performance(1000)) <= 20
 
 
+def test_highest_city_inflows_returns_the_maximum():
+    result = answer_question("Which cities have the highest inflows?")
+    expected = max(result["facts"]["cities"], key=lambda row: row["inflows_inr"])
+    assert result["tool"] == "city_performance"
+    assert expected["city"] in result["answer"]
+    assert f"₹{expected['inflows_inr']:,.0f}" in result["answer"]
+
+
 def test_04_lowest_city_inflows_returns_a_minimum():
     result = answer_question("Which city has the lowest inflows?")
     cities = result["facts"]["cities"]
