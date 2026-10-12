@@ -53,7 +53,7 @@ def choose_tool(question: str) -> str:
 def deterministic_answer(question: str, tool_name: str, facts: dict[str, Any]) -> str:
     q = question.lower()
     if tool_name == "aum_guard":
-        return "AUM cannot be determined from this synthetic dataset. Transaction inflows and net flows are not assets under management. Holdings and valuation data would be required."
+        return "AUM cannot be determined from this synthetic dataset. Transaction inflows and net flows are not assets under management. holdings and valuation data would be required."
     if tool_name == "revenue_guard":
         return "The available synthetic dataset does not establish actual commission revenue. Transaction inflows and net flows are not commission income. Commission rates, fee records, and accounting data would be needed to calculate actual revenue."
     if tool_name == "privacy_guard":

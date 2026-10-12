@@ -138,6 +138,78 @@ def transaction_failures() -> dict:
     }
 
 
+
+def transaction_failures() -> dict:
+    """Return aggregate transaction failure metrics and rates by type."""
+    with connect() as conn:
+        totals = conn.execute("""
+            SELECT
+                COUNT(*) AS total_transactions,
+                SUM(CASE WHEN transaction_status = 'Failed' THEN 1 ELSE 0 END)
+                    AS failed_transactions
+            FROM transactions
+        """).fetchone()
+
+        rows = conn.execute("""
+            SELECT
+                transaction_type,
+                COUNT(*) AS total_transactions,
+                SUM(CASE WHEN transaction_status = 'Failed' THEN 1 ELSE 0 END)
+                    AS failed_transactions
+            FROM transactions
+            GROUP BY transaction_type
+            ORDER BY transaction_type
+        """).fetchall()
+
+        monthly_rows = conn.execute("""
+            SELECT
+                substr(transaction_date, 1, 7) AS month,
+                COUNT(*) AS total_transactions,
+                SUM(CASE WHEN transaction_status = 'Failed' THEN 1 ELSE 0 END)
+                    AS failed_transactions
+            FROM transactions
+            GROUP BY substr(transaction_date, 1, 7)
+            ORDER BY month
+        """).fetchall()
+
+    total = totals["total_transactions"] or 0
+    failed = totals["failed_transactions"] or 0
+
+    by_type = []
+    for row in rows:
+        type_total = row["total_transactions"] or 0
+        type_failed = row["failed_transactions"] or 0
+        by_type.append({
+            "transaction_type": row["transaction_type"],
+            "total_transactions": type_total,
+            "failed_transactions": type_failed,
+            "failure_rate_pct": round(type_failed / type_total * 100, 2)
+                if type_total else 0,
+        })
+
+    
+    return {
+        "total_transactions": total,
+        "failed_transactions": failed,
+        "failure_rate_pct": round(failed / total * 100, 2) if total else 0,
+        "by_type": by_type,
+        "monthly": [
+            {
+                "month": row["month"],
+                "total_transactions": row["total_transactions"],
+                "failed_transactions": row["failed_transactions"] or 0,
+                "failure_rate_pct": round(
+                    (row["failed_transactions"] or 0)
+                    / row["total_transactions"] * 100, 2
+                ) if row["total_transactions"] else 0,
+            }
+            for row in monthly_rows
+        ],
+        "synthetic_data": True,
+    }
+
+
+
 def run_tool(tool_name: str) -> dict:
     """Allow-list for the AI layer: no arbitrary SQL and no writes."""
     tools = {
@@ -146,8 +218,10 @@ def run_tool(tool_name: str) -> dict:
       "city_performance": lambda: {"cities": city_performance(limit=20)},
       "city_comparison": lambda: {"cities": city_performance(limit=20)},
       "transaction_failures": transaction_failures,
+      "city_comparison": lambda: {"cities": city_performance(limit=20)},
       "scheme_performance": lambda: {"schemes": scheme_performance(limit=100)},
       "sip_summary": sip_summary,
+      "transaction_failures": transaction_failures,
     }
     if tool_name not in tools:
         raise ValueError("Unsupported analytics tool")
