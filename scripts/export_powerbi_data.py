@@ -146,6 +146,40 @@ def main() -> None:
                 GROUP BY sip_status
                 ORDER BY sip_status
             """,
+
+            "transaction_failure_by_type.csv": """
+                SELECT
+                    transaction_type,
+                    COUNT(*) AS total_transactions,
+                    SUM(CASE WHEN transaction_status = 'Failed'
+                             THEN 1 ELSE 0 END) AS failed_transactions,
+                    ROUND(
+                        100.0 * SUM(CASE WHEN transaction_status = 'Failed'
+                                         THEN 1 ELSE 0 END) / COUNT(*),
+                        2
+                    ) AS failure_pct
+                FROM transactions
+                GROUP BY transaction_type
+                ORDER BY failure_pct DESC
+            """,
+            "monthly_failure_trend.csv": """
+                SELECT
+                    substr(transaction_date, 1, 7) AS month,
+                    COUNT(*) AS total_transactions,
+                    SUM(CASE WHEN transaction_status = 'Failed'
+                             THEN 1 ELSE 0 END) AS failed_transactions,
+                    SUM(CASE WHEN transaction_status = 'Successful'
+                             THEN 1 ELSE 0 END) AS successful_transactions,
+                    ROUND(
+                        100.0 * SUM(CASE WHEN transaction_status = 'Failed'
+                                         THEN 1 ELSE 0 END) / COUNT(*),
+                        2
+                    ) AS failure_pct
+                FROM transactions
+                GROUP BY substr(transaction_date, 1, 7)
+                ORDER BY month
+            """,
+
         }
         for filename, query in curated_queries.items():
             exported[filename] = export_query(conn, filename, query)
