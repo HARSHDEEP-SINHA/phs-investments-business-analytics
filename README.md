@@ -20,6 +20,24 @@ The project is designed to demonstrate a complete workflow:
 5. Let users ask natural-language questions through a controlled AI tool layer.
 6. Test outputs, document assumptions and communicate business limitations.
 
+## Looker Studio dashboard preview
+
+The project includes a browser-based Looker Studio report connected to Google Sheets exports from the synthetic SQLite dataset. The report covers investment trends, city performance, and transaction quality. All displayed records and results are synthetic and illustrative.
+
+### Dashboard overview
+
+![PHS Investments BI dashboard overview](docs/screenshots/dashboard-overview.png)
+
+### City performance
+
+![City performance charts](docs/screenshots/city-performance.png)
+
+### Transaction quality and failures
+
+![Transaction quality dashboard](docs/screenshots/transaction-quality.png)
+
+For the interpretation of these illustrative metrics, see [Business Insights & Recommendations](docs/BUSINESS_INSIGHTS.md). For the setup and report-building checklist, see [Looker Studio Dashboard Build Guide](docs/LOOKER_STUDIO_DASHBOARD_BUILD.md).
+
 ## Features in the current MVP
 
 - Reproducible synthetic data seeded into SQLite on first API startup.
