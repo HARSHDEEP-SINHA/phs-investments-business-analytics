@@ -20,6 +20,8 @@ data/*.sqlite
 data/*.sqlite3
 data/raw/
 data/processed/
+exports/*.csv
+exports/*.json
 
 # Jupyter
 .ipynb_checkpoints/
