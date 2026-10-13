@@ -16,6 +16,14 @@
   <img alt="Synthetic data" src="https://img.shields.io/badge/Data-Synthetic%20only-6B7280" />
 </p>
 
+## Live demo
+
+- **[Open the live Streamlit dashboard](https://phs-bi-dashboard.onrender.com)**
+- **[FastAPI health check](https://phs-bi-api.onrender.com/health)** — expected response: `{"status":"ok","data":"synthetic"}`
+- **[Interactive API documentation](https://phs-bi-api.onrender.com/docs)**
+
+The hosted demo uses synthetic data only. Free hosting may take a short time to wake up after inactivity. The optional Gemini integration may be unavailable unless a valid API key is configured in the hosting environment.
+
 ## Overview
 
 Mutual-fund distribution teams need a reliable way to understand transaction flows, city and scheme performance, SIP registrations, and transaction quality. This project demonstrates one way to turn relational data into decision-support analytics: fixed SQL queries calculate the metrics, a FastAPI service exposes them, a Streamlit dashboard visualizes them, and a constrained assistant answers natural-language questions using approved analytics tools.
