@@ -1,4 +1,5 @@
 """FastAPI application for the synthetic business intelligence project."""
+import os
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException
@@ -18,7 +19,11 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="PHS Business Intelligence API", version="1.0.0",
               description="Demo analytics API backed by synthetic data only.", lifespan=lifespan)
-app.add_middleware(CORSMiddleware, allow_origins=["http://localhost:8501", "http://127.0.0.1:8501"],
+# This portfolio demo uses synthetic data and no cookies/credentials. Set FRONTEND_URL
+# to the deployed dashboard origin for a narrower CORS policy when desired.
+frontend_url = os.getenv("FRONTEND_URL", "*").strip()
+allowed_origins = [frontend_url] if frontend_url and frontend_url != "*" else ["*"]
+app.add_middleware(CORSMiddleware, allow_origins=allowed_origins,
                    allow_credentials=False, allow_methods=["GET", "POST"], allow_headers=["*"])
 
 
