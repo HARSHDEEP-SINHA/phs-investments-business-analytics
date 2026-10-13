@@ -76,8 +76,8 @@ The repository test suite includes automated checks corresponding to these 20 sc
 | AI-01 | Pass | Inflows ₹119,042,140; outflows ₹33,166,300 |
 | AI-02 | Pass | Monthly trend returned chronological net-flow figures |
 | AI-03 | Pass | Ranchi identified as highest city by inflows |
-| AI-04 | Pass | Noida identified as lowest city by inflows |
-| AI-05 | Pass | Bengaluru identified as highest city by net flows |
+| AI-04 | Pass — observed response | Jaipur identified as lowest-inflow city: ₹6,786,140 |
+| AI-05 | Pass — observed response | Bengaluru identified as highest-net-flow city: ₹8,308,960 |
 | AI-06 | Pass | Highest scheme by net flows |
 | AI-07 | Pass | 1,308 active SIP registrations |
 | AI-08 | Pass | Registered monthly value of active SIPs ₹4,973,500 |
@@ -100,10 +100,14 @@ The repository test suite includes automated checks corresponding to these 20 sc
 
 ## Latest Validation Summary
 
-- Automated Python tests: 6 passed.
-- Manual Streamlit evaluation: all 20 planned question scenarios have been exercised during iterative testing; four cases required fixes and passed their subsequent retests.
-- Full tool-routing and source API/SQL verification across all cases: not yet completed.
-- Gemini-enabled and deterministic-fallback comparison: not yet fully verified.
-- Dataset: synthetic; no claims about actual PHS Investments performance.
+## Latest Validation Summary
 
-The manual checks demonstrate expected response behavior for the scenarios tested. They do not constitute a complete independent audit of all tool outputs and source calculations.
+- **Automated Python tests:** 23 passed.
+- **Batch API evaluation:** 17/17 scenarios (AI-04 to AI-20) returned API responses successfully.
+- **Observed API behavior:** Responses were consistent with the expected behavior for the reviewed scenarios, including aggregate analytics, transaction failure analysis, privacy protection, read-only restrictions, unsupported AUM/revenue questions, ambiguity clarification, and evidence-based recommendations.
+- **Evaluation scoring:** The batch script currently collects responses and labels them `REVIEW`; it does not independently verify every expected result. The observations above are not a claim of a fully automated 17/17 pass score.
+- **Tool-routing and source verification:** Full verification against underlying API/SQL results for every scenario remains pending.
+- **Model comparison:** Gemini-enabled versus deterministic-fallback behavior remains unverified. The latest batch run used the deterministic fallback (`ai_enhanced: false`).
+- **Dataset:** Synthetic data only. Results must not be presented as actual PHS Investments business performance.
+
+The current results establish that the existing automated test suite passes and the 17 API scenarios respond successfully. A complete evaluation score requires explicit assertions for each scenario and the remaining source-verification and model-comparison checks.
